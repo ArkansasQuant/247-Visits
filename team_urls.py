@@ -74,7 +74,7 @@ SLUGS = {
     "Oklahoma State": "oklahoma-state",
     "TCU": "tcu",
     "Texas Tech": "texas-tech",
-    "UCF": "ucf",                       # VERIFY (could be central-florida)
+    "UCF": "central-florida",           # verified (404 on "ucf")
     "Utah": "utah",
     "West Virginia": "west-virginia",
 
@@ -86,10 +86,10 @@ SLUGS = {
     "Florida State": "florida-state",
     "Georgia Tech": "georgia-tech",
     "Louisville": "louisville",
-    "Miami": "miami",                   # VERIFY (Miami FL; 247 may use miami-fl)
-    "NC State": "nc-state",             # VERIFY (could be north-carolina-state)
+    "Miami": "miami",                   # verified (2025 slugcheck)
+    "NC State": "nc-state",             # verified (2025 slugcheck)
     "North Carolina": "north-carolina",
-    "Pittsburgh": "pittsburgh",         # VERIFY (could be pitt)
+    "Pittsburgh": "pittsburgh",         # verified (2025 slugcheck)
     "SMU": "smu",
     "Stanford": "stanford",
     "Syracuse": "syracuse",
@@ -102,7 +102,7 @@ SLUGS = {
     "Washington State": "washington-state",
 
     # ---------------- American (AAC) ----------------
-    "Army": "army",                     # VERIFY (could be army-west-point)
+    "Army": "army",                     # verified (2025 slugcheck)
     "Charlotte": "charlotte",
     "East Carolina": "east-carolina",
     "Florida Atlantic": "florida-atlantic",
@@ -114,21 +114,21 @@ SLUGS = {
     "Temple": "temple",
     "Tulane": "tulane",
     "Tulsa": "tulsa",
-    "UAB": "uab",                       # VERIFY (could be alabama-birmingham)
-    "UTSA": "texas-san-antonio",        # VERIFY (could be utsa)
+    "UAB": "alabama-birmingham",        # verified (404 on "uab")
+    "UTSA": "texas-san-antonio",        # verified (2025 slugcheck)
 
     # ---------------- Conference USA ----------------
     "Delaware": "delaware",             # FBS 2025
-    "Florida International": "florida-international",  # VERIFY (could be fiu)
+    "Florida International": "florida-international",  # verified (2025 slugcheck)
     "Jacksonville State": "jacksonville-state",       # FBS 2023
     "Kennesaw State": "kennesaw-state",               # FBS 2024
     "Liberty": "liberty",               # FBS reclass began 2018 (window start)
     "Louisiana Tech": "louisiana-tech",
-    "Middle Tennessee": "middle-tennessee",  # VERIFY (could be middle-tennessee-state)
+    "Middle Tennessee": "middle-tennessee-state",  # verified (404 on "middle-tennessee")
     "Missouri State": "missouri-state", # FBS 2025
     "New Mexico State": "new-mexico-state",
-    "Sam Houston": "sam-houston-state", # FBS 2023 # VERIFY (could be sam-houston)
-    "UTEP": "texas-el-paso",            # VERIFY (could be utep)
+    "Sam Houston": "sam-houston-state", # FBS 2023; verified (2025 slugcheck)
+    "UTEP": "utep",                     # verified (404 on "texas-el-paso")
     "Western Kentucky": "western-kentucky",
 
     # ---------------- MAC ----------------
@@ -139,12 +139,12 @@ SLUGS = {
     "Central Michigan": "central-michigan",
     "Eastern Michigan": "eastern-michigan",
     "Kent State": "kent-state",
-    "Miami (OH)": "miami-oh",
+    "Miami (OH)": "miami-ohio",         # verified (404 on "miami-oh")
     "Northern Illinois": "northern-illinois",
     "Ohio": "ohio",
     "Toledo": "toledo",
     "Western Michigan": "western-michigan",
-    "UMass": "massachusetts",           # VERIFY (could be umass); FBS whole window
+    "UMass": "massachusetts",           # verified (2025 slugcheck); FBS whole window
 
     # ---------------- Mountain West ----------------
     "Air Force": "air-force",
@@ -156,7 +156,7 @@ SLUGS = {
     "New Mexico": "new-mexico",
     "San Diego State": "san-diego-state",
     "San Jose State": "san-jose-state",
-    "UNLV": "unlv",                     # VERIFY (could be nevada-las-vegas)
+    "UNLV": "unlv",                     # verified (2025 slugcheck)
     "Utah State": "utah-state",
     "Wyoming": "wyoming",
 
@@ -167,18 +167,18 @@ SLUGS = {
     "Georgia Southern": "georgia-southern",
     "Georgia State": "georgia-state",
     "James Madison": "james-madison",   # FBS 2022
-    "Louisiana": "louisiana",           # VERIFY (Ragin' Cajuns; could be louisiana-lafayette)
-    "UL Monroe": "louisiana-monroe",    # VERIFY (could be ul-monroe)
+    "Louisiana": "louisiana",           # verified (2025 slugcheck)
+    "UL Monroe": "louisiana-monroe",    # verified (2025 slugcheck)
     "Marshall": "marshall",
     "Old Dominion": "old-dominion",
     "South Alabama": "south-alabama",
-    "Southern Miss": "southern-miss",   # VERIFY (could be southern-mississippi)
+    "Southern Miss": "southern-mississippi",     # verified (404 on "southern-miss")
     "Texas State": "texas-state",
     "Troy": "troy",
 
     # ---------------- Independents ----------------
     "Notre Dame": "notre-dame",
-    "UConn": "connecticut",             # VERIFY (could be uconn)
+    "UConn": "connecticut",             # verified (2025 slugcheck)
 }
 
 # Teams that JOINED FBS within the window: {display: first_fbs_season}.
