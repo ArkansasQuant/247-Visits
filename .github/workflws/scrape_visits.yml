@@ -1,0 +1,137 @@
+name: Scrape 247 Visits
+
+on:
+  workflow_dispatch:
+    inputs:
+      seasons:
+        description: 'Seasons: "all", a year (2025), a range (2018-2026), or a list (2018,2020,2024)'
+        required: true
+        default: 'all'
+      teams:
+        description: 'Optional team filter (comma list of display names, e.g. "Arkansas,Ohio State"). Blank = all FBS teams.'
+        required: false
+        default: ''
+      concurrency:
+        description: 'Concurrent fetches PER season job (3-4 recommended; higher risks rate-limit/skeleton HTML)'
+        required: false
+        default: '4'
+      force:
+        description: 'Ignore existing checkpoints and re-scrape everything'
+        type: boolean
+        required: false
+        default: false
+
+# Cancel an older run of this workflow if you start a new one.
+concurrency:
+  group: scrape-visits
+  cancel-in-progress: false
+
+jobs:
+  # -------------------------------------------------------------------------
+  # 1) Parse the seasons input into a JSON matrix (no third-party deps needed).
+  # -------------------------------------------------------------------------
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      seasons: ${{ steps.emit.outputs.seasons }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - id: emit
+        run: |
+          SEASONS=$(python scrape_visits.py --emit-seasons "${{ inputs.seasons }}")
+          echo "seasons=$SEASONS" >> "$GITHUB_OUTPUT"
+          echo "Season matrix: $SEASONS"
+
+  # -------------------------------------------------------------------------
+  # 2) One job per season. Modest parallelism (shared GitHub IP -> 247 will
+  #    rate-limit if we hammer it). Each job writes season_<N>.csv as an artifact.
+  # -------------------------------------------------------------------------
+  scrape:
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 330            # well under the 6h hard cap
+    strategy:
+      max-parallel: 2
+      fail-fast: false
+      matrix:
+        season: ${{ fromJson(needs.setup.outputs.seasons) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps + Chromium
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      # Recover checkpoints from a previous run of the SAME season so a re-run
+      # only re-scrapes the teams that failed/changed. Optional but cheap.
+      - name: Restore checkpoint cache
+        uses: actions/cache@v4
+        with:
+          path: checkpoints/${{ matrix.season }}
+          key: ckpt-${{ matrix.season }}-${{ github.run_id }}
+          restore-keys: |
+            ckpt-${{ matrix.season }}-
+
+      - name: Scrape season ${{ matrix.season }}
+        run: |
+          python scrape_visits.py \
+            --season ${{ matrix.season }} \
+            --teams "${{ inputs.teams }}" \
+            --concurrency ${{ inputs.concurrency }} \
+            ${{ inputs.force && '--force' || '' }}
+
+      - name: Upload season artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visits-season-${{ matrix.season }}
+          path: season_${{ matrix.season }}.csv
+          retention-days: 5
+          if-no-files-found: warn
+
+  # -------------------------------------------------------------------------
+  # 3) Combine ALL season CSVs into ONE real xlsx + one csv. Runs even if some
+  #    season jobs failed, so you always get whatever completed.
+  # -------------------------------------------------------------------------
+  combine:
+    needs: scrape
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install combine deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install "openpyxl>=3.1"
+
+      - name: Download all season artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all_seasons
+          pattern: visits-season-*
+          merge-multiple: true
+
+      - name: Combine into xlsx + csv
+        run: python scrape_visits.py --combine --input-dir all_seasons --out-dir output
+
+      - name: Upload combined output
+        uses: actions/upload-artifact@v4
+        with:
+          name: visits_full
+          path: |
+            output/visits_full_*.xlsx
+            output/visits_full_*.csv
+          retention-days: 90
+          if-no-files-found: error
